@@ -27,13 +27,21 @@ async function startPolling(){
 		message : 'VK Duty v' + package.version + ' запущен ✅'
 	});
 
-	setInterval(async () => {
-		await vk.api.wall.createComment({
-			owner_id : '-174105461',
-			post_id : '35135',
-			message : 'ферма'
+	let timeToFarm = Date.now() - new Date(db.get("last_farm_date").value());
+
+	let farm = async () => {
+		let comment_id = await vk.api.wall.createComment({
+			message : 'ферма',
+			owner_id : -174105461,
+			post_id : 35135
 		});
-	}, 4 * 1000 * 60 * 60);
+		db.set("last_farm_date", Date.now().toString());
+		setTimeout(farm, 4 * 1000 * 60 * 60);
+	}
+
+	if(timeToFarm < 0)
+		await farm();
+	else setTimeout(farm, timeToFarm);
 
 	console.log('Автофарм ирискоинов запущен');
 

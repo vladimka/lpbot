@@ -30,13 +30,26 @@ module.exports = function Ctx(vk, message, db, user){
 		await this.edit('✅ ' + text);
 	}
 
-	this.sendRp = async (userId, rpName) => {
+	this.sendRp = async (memberId, rpName) => {
 		let rp = this.db.get('rp_commands').find({ name : rpName }).value();
-		let user = await this.api.users.get({ user_ids : userId });
-		user = user[0];
-		let user1Name = `${this.user.first_name} ${this.user.last_name}`;
-		let user2Name = `${user.first_name} ${user.last_name}`;
+		let memberName;
 
-		await this.edit(`${rp.sticker}| @id${this.user.id} (${user1Name}) ${rp.action} @id${user.id} (${user2Name})`);
+		if(memberId < 0){
+			let member = await this.api.groups.getById({
+				group_id : memberId
+			});
+			member = member[0];
+			memberName = member.name;
+		}else{
+			let member = await this.api.users.get({
+				user_id : memberId
+			});
+			member = member[0];
+			memberName = memberName.last_name + " " + memberName.first_name;
+		}
+
+		let username = `${this.user.last_name} ${this.user.first_name}`;
+
+		await this.edit(`${rp.sticker}| @id${this.user.id} (${username}) ${rp.action} @id${memberId} (${memberName})`);
 	}
 }
