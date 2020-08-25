@@ -9,7 +9,7 @@ db.defaults({
 	token : "",
 	prefix : '.млп',
 	rp_commands : [],
-	last_farm_date : ""
+	last_farm_date : -1
 }).write();
 
 module.exports = db;
