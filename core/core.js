@@ -35,7 +35,7 @@ async function startPolling(){
 			owner_id : -174105461,
 			post_id : 35135
 		});
-		db.set("last_farm_date", Date.now().toString());
+		db.set("last_farm_date", Date.now().toString()).write();
 		setTimeout(farm, 4 * 1000 * 60 * 60);
 	}
 

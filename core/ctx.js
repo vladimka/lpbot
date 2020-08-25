@@ -35,14 +35,16 @@ module.exports = function Ctx(vk, message, db, user){
 		let memberName;
 
 		if(memberId < 0){
+			console.log(memberId);
 			let member = await this.api.groups.getById({
-				group_id : memberId
+				group_ids : memberId
 			});
 			member = member[0];
+			console.log(member);
 			memberName = member.name;
 		}else{
 			let member = await this.api.users.get({
-				user_id : memberId
+				user_ids : memberId
 			});
 			member = member[0];
 			memberName = memberName.last_name + " " + memberName.first_name;
