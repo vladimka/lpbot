@@ -21,13 +21,21 @@ async function startPolling(){
 
 	console.log('Данные о пользователе получены');
 
-	let settings = db.get('settings').value();
-
 	await vk.api.messages.send({
 		peer_id : user.id,
 		random_id : Math.floor(Math.random()*2000000),
 		message : 'VK Duty v' + package.version + ' запущен ✅'
 	});
+
+	setInterval(async () => {
+		await vk.api.wall.createComment({
+			owner_id : '-174105461',
+			post_id : '35135',
+			message : 'ферма'
+		});
+	}, 4 * 1000 * 60 * 60);
+
+	console.log('Автофарм ирискоинов запущен');
 
 	while(true){
 		let messages = await vk.api.messages.search({
