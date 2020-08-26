@@ -19,6 +19,9 @@ module.exports = function Ctx(vk, message, db, user){
 		id = id || this.message.id;
 		is_for_all = is_for_all || 1;
 
+		if(this.message.peer_id == this.user.id)
+			is_for_all = 0;
+
 		await this.api.messages.delete({
 			peer_id : this.message.peer_id,
 			message_id : id,
@@ -26,12 +29,19 @@ module.exports = function Ctx(vk, message, db, user){
 		});
 	}
 
+	this.answer = async (emoji, text) => {
+		this.edit(`${emoji} ${text}`);
+
+		if(this.db.get('settings.deleteAnswers').value() == true)
+			setTimeout(() => this.delete(), this.db.get('settings.deleteAnswersDelay').value() * 1000);
+	}
+
 	this.sendSuccess = async text => {
-		await this.edit('✅ ' + text);
+		await this.answer('✅', text);
 	}
 
 	this.sendError = async text => {
-		await this.edit('⚠ ' + text);
+		await this.answer('⚠', text);
 	}
 
 	this.sendRp = async (memberId, rpName) => {

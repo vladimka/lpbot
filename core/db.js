@@ -8,7 +8,11 @@ db.defaults({
 	aliases : [],
 	token : "",
 	prefix : '.млп',
-	rp_commands : []
+	rp_commands : [],
+	settings : {
+		deleteAnswers : false,
+		deleteAnswersDelay : 5
+	}
 }).write();
 
 module.exports = db;
