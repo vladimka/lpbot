@@ -39,17 +39,22 @@ module.exports = function Ctx(vk, message, db, user){
 		let memberName;
 
 		if(memberId < 0){
-			return await this.sendError('Группа не может быть аппонентом для РП комманд');
-		}else{
-			let member = await this.api.users.get({
-				user_ids : memberId
+			let member = await this.api.groups.getById({
+				group_ids : Math.abs(memberId)
 			});
 			member = member[0];
-			memberName = memberName.last_name + " " + memberName.first_name;
+			memberName = `@${member.screen_name} (${member.name})`;
+		}else{
+			let member = await this.api.users.get({
+				user_ids : memberId,
+				fields : 'domain'
+			});
+			member = member[0];
+			memberName = `@${member.domain} (${member.first_name} ${member.last_name})`;
 		}
 
-		let username = `${this.user.last_name} ${this.user.first_name}`;
+		let username = `@id${this.user.id} (${this.user.first_name} ${this.user.last_name})`;
 
-		await this.edit(`${rp.sticker}| @id${this.user.id} (${username}) ${rp.action} @id${memberId} (${memberName})`);
+		await this.edit(`${rp.sticker}| ${username} ${rp.action} ${memberName}`);
 	}
 }
