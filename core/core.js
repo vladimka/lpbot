@@ -12,6 +12,8 @@ function addCommand(params){
 	commands.push(params);
 }
 
+let random = () => Math.floor(Math.random()*2000000);
+
 async function startPolling(){
 	console.log('VK Duty запущен');
 	console.log('Получаю данные о пользователе');
@@ -28,7 +30,7 @@ async function startPolling(){
 
 	await vk.api.messages.send({
 		peer_id : user.id,
-		random_id : Math.floor(Math.random()*2000000),
+		random_id : random(),
 		message : 'VK Duty v' + package.version + ' запущен ✅'
 	});
 
@@ -47,6 +49,10 @@ async function startPolling(){
 			if(message.from_id != user.id)
 				return;
 
+			if(message.id == last_message_id)
+				return;
+			last_message_id = message.id;
+
 			aliases.forEach(async alias => {
 				let regexp = new RegExp('^'+alias.from, 'im');
 				if(!regexp.test(ctx.message.text))
@@ -61,13 +67,20 @@ async function startPolling(){
 					return valueToReplace;
 				});
 
-				await ctx.edit(answer);
+				await ctx.delete();
+
+				let msg = {
+					peer_id : ctx.message.peer_id,
+					random_id : random(),
+					message : answer
+				}
+
+				if(ctx.message.reply_message)
+					msg.reply_to = ctx.message.reply_message.id;
+
+				await ctx.api.messages.send(msg);
 				return console.log(`Обработан алиас: ${alias.name}`);
 			});
-
-			if(message.id == last_message_id)
-				return;
-			last_message_id = message.id;
 
 			commands.forEach(async command => {
 				let prefix_regexp = new RegExp('^\\'+prefix, 'm');
