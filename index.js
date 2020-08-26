@@ -48,7 +48,7 @@ core.addCommand({
 
 core.addCommand({
 	name : 'рп',
-	regexp : /^рп\s+(?<rp_name>.+)/m,
+	regexp : /^рп\s+(?<name>.+)/m,
 	handler : rp.execute
 });
 
