@@ -8,8 +8,7 @@ db.defaults({
 	aliases : [],
 	token : "",
 	prefix : '.млп',
-	rp_commands : [],
-	last_farm_date : -1
+	rp_commands : []
 }).write();
 
 module.exports = db;

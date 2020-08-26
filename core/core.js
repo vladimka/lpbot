@@ -16,34 +16,21 @@ async function startPolling(){
 	console.log('VK Duty запущен');
 	console.log('Получаю данные о пользователе');
 
-	let user = await vk.api.users.get({});
-	user = user[0];
+	let user;
+	let last_message_id;
 
-	console.log('Данные о пользователе получены');
+	await vk.api.users.get({})
+		.then(resp => {
+			console.log('Данные о пользователе получены');
+			user = resp[0];
+		})
+		.catch(err => console.log('Неудалось полчуить обьект пользователя\n' + err));
 
 	await vk.api.messages.send({
 		peer_id : user.id,
 		random_id : Math.floor(Math.random()*2000000),
 		message : 'VK Duty v' + package.version + ' запущен ✅'
 	});
-
-	let timeToFarm = Date.now() - new Date(db.get("last_farm_date").value());
-
-	let farm = async () => {
-		let comment_id = await vk.api.wall.createComment({
-			message : 'ферма',
-			owner_id : -174105461,
-			post_id : 35135
-		});
-		db.set("last_farm_date", Date.now()).write();
-		setTimeout(farm, 4 * 1000 * 60 * 60);
-	}
-
-	if(timeToFarm < 0)
-		await farm();
-	else setTimeout(farm, timeToFarm);
-
-	console.log('Автофарм ирискоинов запущен');
 
 	while(true){
 		let messages = await vk.api.messages.search({
@@ -60,7 +47,7 @@ async function startPolling(){
 			if(message.from_id != user.id)
 				return;
 
-			aliases.forEach(alias => {
+			aliases.forEach(async alias => {
 				let regexp = new RegExp('^'+alias.from, 'im');
 				if(!regexp.test(ctx.message.text))
 					return;
@@ -74,9 +61,13 @@ async function startPolling(){
 					return valueToReplace;
 				});
 
-				ctx.edit(answer);
-				console.log(`Обработан алиас: ${alias.name}`);
+				await ctx.edit(answer);
+				return console.log(`Обработан алиас: ${alias.name}`);
 			});
+
+			if(message.id == last_message_id)
+				return;
+			last_message_id = message.id;
 
 			commands.forEach(async command => {
 				let prefix_regexp = new RegExp('^\\'+prefix, 'm');

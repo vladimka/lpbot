@@ -26,8 +26,12 @@ module.exports = function Ctx(vk, message, db, user){
 		});
 	}
 
-	this.sendSuccess = async (text) => {
+	this.sendSuccess = async text => {
 		await this.edit('✅ ' + text);
+	}
+
+	this.sendError = async text => {
+		await this.edit('⚠ ' + text);
 	}
 
 	this.sendRp = async (memberId, rpName) => {
@@ -35,13 +39,7 @@ module.exports = function Ctx(vk, message, db, user){
 		let memberName;
 
 		if(memberId < 0){
-			console.log(memberId);
-			let member = await this.api.groups.getById({
-				group_ids : memberId
-			});
-			member = member[0];
-			console.log(member);
-			memberName = member.name;
+			return await this.sendError('Группа не может быть аппонентом для РП комманд');
 		}else{
 			let member = await this.api.users.get({
 				user_ids : memberId
