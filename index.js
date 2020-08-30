@@ -3,6 +3,7 @@ const aliases = require('./commands/aliases.js');
 const rp = require('./commands/rp.js');
 const basic = require('./commands/basic.js');
 const settings = require('./commands/settings.js');
+const fun = require('./commands/fun.js');
 
 core.addCommand({
 	regexp : /^инфо/m,
@@ -98,6 +99,12 @@ core.addCommand({
 	regexp : /н(айстройки)?\s+(\d+)\s(.+)/,
 	name : 'установка настройки',
 	handler : settings.set
+});
+
+core.addCommand({
+	regexp : /инфа\s*.+/,
+	name : 'инфа',
+	handler : fun.info
 });
 
 core.startPolling();
