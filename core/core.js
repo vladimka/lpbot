@@ -54,7 +54,7 @@ async function startPolling(){
 			last_message_id = message.id;
 
 			aliases.forEach(async alias => {
-				let regexp = new RegExp('^'+alias.from, 'im');
+				let regexp = new RegExp('^'+alias.from + '$', 'im');
 				if(!regexp.test(ctx.message.text))
 					return;
 
