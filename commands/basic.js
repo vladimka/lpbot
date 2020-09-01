@@ -82,5 +82,108 @@ module.exports = {
 		];
 
 		await ctx.edit(answer.join('\n'));
+	},
+	async deleteMessages(ctx, match){
+		let { offset, count } = match.groups;
+
+		offset = parseInt(offset);
+		count = parseInt(count);
+
+		if(count == undefined){
+			if(offset == undefined){
+				count = 0;
+				offset = 0;
+			}else{
+				count = offset;
+				offset = 0;
+			}
+		}
+
+		let messages = await ctx.api.messages.getHistory({
+			peer_id : ctx.message.peer_id,
+			offset : offset + 1,
+			count
+		});
+
+		messages = messages.items;
+		messages = messages.filter(async msg => {
+			if(msg.peer_id != ctx.user.id && msg.from_id == ctx.user.id)
+				return msg;
+		});
+
+		messages.forEach(async msg => await ctx.delete(msg.id, 1));
+
+		await ctx.sendSuccess(`Удалено ${messages.length} сообщений`);
+	},
+	async editMessages(ctx, match){
+		let { offset, count, text } = match.groups;
+
+		offset = parseInt(offset);
+		count = parseInt(count);
+
+		if(count == undefined){
+			if(offset == undefined){
+				count = 0;
+				offset = 0;
+			}else{
+				count = offset;
+				offset = 0;
+			}
+		}
+
+		if(text == undefined)
+			text = "[ДАННЫЕ УДАЛЕНЫ]"
+
+		let messages = await ctx.api.messages.getHistory({
+			peer_id : ctx.message.peer_id,
+			offset : offset + 1,
+			count
+		});
+
+		messages = messages.items;
+		messages = messages.filter(async msg => {
+			if(msg.from_id == ctx.user.id)
+				return msg;
+		});
+
+		messages.forEach(async msg => await ctx.edit(text, msg.id));
+		await ctx.sendSuccess(`Измеенено ${messages.length} сообщений`);
+	},
+	async editAndDeleteMessages(ctx, match){
+		let { offset, count, text } = match.groups;
+
+		offset = parseInt(offset);
+		count = parseInt(count);
+
+		if(count == undefined){
+			if(offset == undefined){
+				count = 0;
+				offset = 0;
+			}else{
+				count = offset;
+				offset = 0;
+			}
+		}
+
+		if(text == undefined)
+			text = "[ДАННЫЕ УДАЛЕНЫ]"
+
+		let messages = await ctx.api.messages.getHistory({
+			peer_id : ctx.message.peer_id,
+			offset : offset + 1,
+			count
+		});
+
+		messages = messages.items;
+		messages = messages.filter(async msg => {
+			if(msg.from_id == ctx.user.id)
+				return msg;
+		});
+
+		messages.forEach(async msg => {
+			await ctx.edit(text, msg.id);
+			await ctx.delete(msg.id, 1);
+		});
+		await ctx.sendSuccess(`Измеенено ${messages.length} сообщений`);
 	}
 }
