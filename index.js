@@ -107,4 +107,22 @@ core.addCommand({
 	handler : fun.info
 });
 
+core.addCommand({
+	regexp : /дд(\s+(?<offset>\d+)(\s+(?<count>\d+))?)?/,
+	name : 'дд',
+	handler : basic.deleteMessages
+});
+
+core.addCommand({
+	regexp : /рр(\s+(?<offset>\d+)(\s+(?<count>\d+))?(\s+(?<text>.+))?)?/,
+	name : 'рр',
+	handler : basic.editMessages
+});
+
+core.addCommand({
+	regexp : /рр\-(\s+(?<offset>\d+)(\s+(?<count>\d+))?(\s+(?<text>.+))?)?/,
+	name : 'рр-',
+	handler : basic.editAndDeleteMessages
+});
+
 core.startPolling();
