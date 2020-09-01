@@ -5,10 +5,12 @@ module.exports = function Ctx(vk, message, db, user){
 	this.user = user;
 	this.settings = this.db.get("settings").value();
 
-	this.edit = async text => {
+	this.edit = async (text, id) => {
+		id = id || this.message.id;
+
 		this.api.messages.edit({
 			peer_id : this.message.peer_id,
-			message_id : this.message.id,
+			message_id : id,
 			message : text,
 			keep_forward_messages : 1
 		})
