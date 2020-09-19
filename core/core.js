@@ -21,12 +21,18 @@ async function startPolling(){
 	let user;
 	let last_message_id;
 
-	await vk.api.users.get({})
-		.then(resp => {
-			console.log('Данные о пользователе получены');
-			user = resp[0];
-		})
-		.catch(err => console.log('Неудалось полчуить обьект пользователя\n' + err));
+	try{
+		user = await vk.api.users.get({});
+		user = user[0];
+		console.log('Данные о пользователе получены');
+	}catch(err){
+		if(err.code == 5){
+			console.log('Недействительный токен');
+			console.log('Получите новый по ссылке: https://oauth.vk.com/oauth/authorize?client_id=2685278&scope=1073737727&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token&revoke=1&__q_hash=0e6ab4e34e0d5550bc72e7008483fa2b');
+			process.exit(-1);
+		}else
+			console.log(err);
+	}
 
 	await vk.api.messages.send({
 		peer_id : user.id,
