@@ -125,4 +125,10 @@ core.addCommand({
 	handler : basic.editAndDeleteMessages
 });
 
+core.addCommand({
+	regexp : /тайп\s+(?<duration>\d+)\s+(?<text>.+)/,
+	name : 'тайп',
+	handler : fun.typing
+});
+
 core.startPolling();
