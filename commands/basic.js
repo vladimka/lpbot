@@ -132,7 +132,7 @@ module.exports = {
 		}
 
 		if(text == undefined)
-			text = "[ДАННЫЕ УДАЛЕНЫ]"
+			text = ""
 
 		let messages = await ctx.api.messages.getHistory({
 			peer_id : ctx.message.peer_id,
@@ -166,7 +166,7 @@ module.exports = {
 		}
 
 		if(text == undefined)
-			text = "[ДАННЫЕ УДАЛЕНЫ]"
+			text = ""
 
 		let messages = await ctx.api.messages.getHistory({
 			peer_id : ctx.message.peer_id,
